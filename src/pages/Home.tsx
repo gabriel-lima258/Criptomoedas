@@ -3,7 +3,7 @@ import styles from "./Home.module.css";
 import { Link, useNavigate } from "react-router";
 import { useEffect, useState, type FormEvent } from "react";
 
-interface CoinProps {
+export interface CoinProps {
   id: string;
   name: string;
   symbol: string;
@@ -29,15 +29,16 @@ interface DataProps {
 export default function Home() {
   const [input, setInput] = useState("");
   const [coins, setCoins] = useState<CoinProps[]>([]);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     // eslint-disable-next-line
     getCoins();
-  }, []);
+  }, [offset]);
 
   async function getCoins() {
     fetch(
-      "https://rest.coincap.io/v3/assets?limit=10&offset=0&apiKey=1846e9cd142e96b9affc38819d8987e05307736d40d3f4cb0b61c0b412106b7a"
+      `https://rest.coincap.io/v3/assets?limit=10&offset=${offset}&apiKey=1846e9cd142e96b9affc38819d8987e05307736d40d3f4cb0b61c0b412106b7a`
     )
       .then((response) => response.json())
       .then((data: DataProps) => {
@@ -64,7 +65,9 @@ export default function Home() {
           return formated;
         });
 
-        setCoins(formatedResult);
+        // pega os valores anteriores e adiciona os novos
+        const listCoins = [...coins, ...formatedResult];
+        setCoins(listCoins);
       });
   }
 
@@ -81,8 +84,12 @@ export default function Home() {
   }
 
   function handleGetMore() {
-    alert("Carregando mais criptomoedas...");
-  }
+    if (offset === 0) {
+        setOffset(10);
+        return
+    }
+    setOffset(offset => offset + 10);
+   }
 
   return (
     <main className={styles.container}>
