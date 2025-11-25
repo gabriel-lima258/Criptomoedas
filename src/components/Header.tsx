@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 export default function Header() {
   return (
     <header className={styles.container}>
-        <Link to="/">
+        <Link to="/" style={{ cursor: 'pointer' }}>
             <img src={logo} alt="logo criptomoedas" />
         </Link>
     </header>
